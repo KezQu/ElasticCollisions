@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"> 
+	<head> 
+	<meta charset="UTF-8">
+	<title>Elastic collisions</title>
+	<script src="client.js"></script>
+	<script src="simulation.js"></script>
+	<link rel="StyleSheet" href="index.css" type="text/css">
+</head>
+<body onload="animate()"> 
+	<h1 class="title">Elastic collisions</h1>
+	<div class="main_window">
+		<div class="left_col">
+			<div style="opacity: 0; transition: opacity 0.5s;" id="sims_col">
+				<h3 class="title">Saved simulations</h3>
+				<div class="box ball_settings" style="height: 543px;">
+					<table>
+						<tr>
+							<td class="input_type" style="background-color: #606c38 !important; width: 100%;" id="session_username"></td>
+							<td>
+								<input type="button" class="input_type" style="width: 100%;" id="logout_btn" value="logout" onclick="logout()">
+							</td>
+						</tr>
+					</table>
+					<table id="saved_simulations">
+					</table>
+				</div>
+			</div>
+			<div class="box learn">
+				<input type="button" class="input_type" value="About page" onclick="ToggleDisplay('about')">
+				<div class="input_type info" id="about">
+					This page allows user to simulate different configuration of a elastic collision, where two or more round objects can collide.
+					!!!IMPORTANT some bugs occur when three or more objects collide at the same time.
+					<hr>
+					<hr>
+					Right side of page contains controls to set properties of a objects:
+					<hr>
+					-- Set ball properties section allows us to set x, y, v<sub>x</sub>, v<sub>y</sub>, m,
+					where x and y are location of a object, v<sub>x</sub>, v<sub>y</sub> are to set speed vectors, and m to set mass of an object,
+					<hr>
+					-- Set color of an object for easier recognition,
+					<hr>
+					-- Add ball button to add object to the simulation,
+					<hr>
+					-- Save simulation button that allows user after login in to save simulation,
+					<hr>
+					-- Start simulation that begins a simulation or resumes it after invoking stop,
+					<hr>
+					-- Reset simulation that resets it to the initial state,
+					<hr>
+					-- Existing balls section contains list of objects in a current simulation and allows user to delete one or more balls.
+					<hr>
+					<hr>
+					Middle part of page is responsible for displaying simulation created by the user,
+					Section below simulation context is responsible for login and register. In order to login valid email and password must be passed,
+					to register as a new user same credentials must be provided.
+					<hr>
+					<hr>
+					Left side is avaliable only for logged users, to access saved simulations,
+					load them into the simulation window or delete them. 
+				</div>
+			</div>
+		</div>
+		<div class="center_col">
+			<div class="box" style="width: 100%;">
+				<canvas id="interactive" width="1600" height="1200" style="width: 100%; aspect-ratio: 4 / 3;"></canvas>
+			</div>
+			<div class="box" style="margin-top: 50px;">
+				<form>
+					<input type="email" class="input_type login_details" id="username" value="e-mail">
+					<input type="password" class="input_type login_details" id="password" value="12345">
+					<input type="button" class="input_type login_btn" id="login_btn" value="login" onclick="login()">
+					<input type="button" class="input_type login_btn" id="register_btn" value="register" onclick="register()">
+				</form>
+			</div>
+			<div class="box error_box" id="error_box">
+			bledne dane logowania
+			</div>
+		</div>
+		<div class="right_col">
+			<h3 class="title">Set ball properties</h3>
+			<div class="box ball_settings">
+				<form>
+					<table>
+						<tr>
+							<td class="input_type location">x</td>
+							<td>
+								<input type="range" class="input_type ball_props" min="0" max="64" id="x">
+							</td>
+							<td class="input_type val_lookup" id="x_val"></td>
+						</tr>
+						<tr>
+							<td class="input_type location">y</td>
+							<td>
+								<input type="range" class="input_type ball_props" min="0" max="48" id="y">
+							</td>
+							<td class="input_type val_lookup" id="y_val"></td>
+						</tr>
+						<tr>
+							<td class="input_type location">v<sub>x</sub></td>
+							<td>
+								<input type="range" class="input_type ball_props" min="-10" max="10" id="dx">
+							</td>
+							<td class="input_type val_lookup" id="dx_val"></td>
+						</tr>
+						<tr>
+							<td class="input_type location">v<sub>y</sub></td>
+							<td>
+								<input type="range" class="input_type ball_props" min="-10" max="10" id="dy">
+							</td>
+							<td class="input_type val_lookup" id="dy_val">
+						</tr>
+						<tr>
+							<td class="input_type location">m</td>
+							<td>
+								<input type="range" class="input_type ball_props" min="1" max="10" id="mass">
+							</td>
+							<td class="input_type val_lookup" id="mass_val">
+						</tr>
+					</table>
+					<input type="color" class="input_type ball_color" id="color">
+					
+					<input type="button" class="input_type" style="width: 49%;" value="Add ball" onclick = "CreateBall()">
+					<input type="button" class="input_type save_sim" id="save_sim" value="Save simulation" onclick = "SaveSimulation()">
+				</form>
+			</div>
+			<input type="button" class="input_type simulation_controls" id="sim" value="Start simulation" onclick = "ToggleSimulation()">
+			<input type="button" class="input_type simulation_controls" value="Reset simulation" onclick = "ResetSimulation()">
+			
+			<h3 class="title">Existing balls</h3>
+			<div class="box ball_selector">
+				<table id="ball_select">
+				</table>
+			</div>
+			<div class="box learn">
+				<input type="button" class="input_type" value="learn more" onclick="ToggleDisplay('learn')">
+				<div class="input_type info" id="learn">
+					In physics, an elastic collision is an encounter (collision) between two bodies in which the total kinetic energy of the two bodies remains the same. 
+					In an ideal, perfectly elastic collision, there is no net conversion of kinetic energy into other forms such as heat, noise, or potential energy.
+					<hr>
+					During the collision of small objects, kinetic energy is first converted to potential energy associated with a repulsive or attractive force between the particles 
+					(when the particles move against this force, i.e. the angle between the force and the relative velocity is obtuse), then this potential energy is converted back to kinetic energy 
+					(when the particles move with this force, i.e. the angle between the force and the relative velocity is acute).
+					<hr>
+					For the case of two non-spinning colliding bodies in two dimensions, the motion of the bodies is determined by the three conservation laws of momentum, kinetic energy and angular momentum. 
+					The overall velocity of each body must be split into two perpendicular velocities: one tangent to the common normal surfaces of the colliding bodies at the point of contact, the other along the line of collision. 
+					Since the collision only imparts force along the line of collision, the velocities that are tangent to the point of collision do not change. The velocities along the line of collision can then be used in the same equations as a one-dimensional collision. 
+					The final velocities can then be calculated from the two new component velocities and will depend on the point of collision.
+				</div>
+			</div>
+		</div>
+	</div>
+</body> 
+</html>
